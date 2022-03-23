@@ -28,34 +28,35 @@ routes = web.RouteTableDef()
 
 
 class HalpyServer(web.Application):
-    @staticmethod
-    async def _log_request(request: Request, success: bool):
-        # Log to the online dashboard
-        try:
-            with DatabaseConnection() as database_connection:
-                cursor = database_connection.cursor()
-                cursor.callproc(
-                    "spCreateAPIConnRequest",
-                    [
-                        request.remote,  # Source
-                        (
-                            request.headers["User-Agent"]
-                            if "User-Agent" in request.headers
-                            else "None"
-                        ),  # Agent
-                        request.path,  # Route
-                        request.method,  # HTTP Method
-                        (
-                            str(await request.json())
-                            if request.can_read_body
-                            else "None"
-                        ),  # Body
-                        (1 if success else 0),  # HMAC match
-                        str(request.version),  # Misc
-                    ],
-                )
-        except NoDatabaseConnection:
-            logger.warning("Connection not logged in the database!")
+    # TODO: Function Under Review ~ Rix
+    # @staticmethod
+    # async def _log_request(request: Request, success: bool):
+    #     # Log to the online dashboard
+    #     try:
+    #         with DatabaseConnection() as database_connection:
+    #             cursor = database_connection.cursor()
+    #             cursor.callproc(
+    #                 "spCreateAPIConnRequest",
+    #                 [
+    #                     request.remote,  # Source
+    #                     (
+    #                         request.headers["User-Agent"]
+    #                         if "User-Agent" in request.headers
+    #                         else "None"
+    #                     ),  # Agent
+    #                     request.path,  # Route
+    #                     request.method,  # HTTP Method
+    #                     (
+    #                         str(await request.json())
+    #                         if request.can_read_body
+    #                         else "None"
+    #                     ),  # Body
+    #                     (1 if success else 0),  # HMAC match
+    #                     str(request.version),  # Misc
+    #                 ],
+    #             )
+    #     except NoDatabaseConnection:
+    #         logger.warning("Connection not logged in the database!")
 
     async def __filter_request(
         self, request: Request
@@ -107,8 +108,9 @@ class HalpyServer(web.Application):
         except web.HTTPError as ex:
             successful = False
             return ex
-        finally:
-            asyncio.ensure_future(self._log_request(request, successful))
+        # finally:
+            # TODO: Function Under Review ~ Rix
+            # asyncio.ensure_future(self._log_request(request, successful))
 
 
 @routes.get("/")
